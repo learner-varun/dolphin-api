@@ -1,0 +1,14 @@
+{
+  "testConfigs": {
+    "baseURL": "https://www.saucedemo.com/",
+    "environment": "QA",
+    "projectName": "SOURCE DEMO",
+    "suiteName": "REGRESSION",
+    "retryOnFailure": true,
+    "retryCount": 1,
+    "threadCount": 3
+  },
+  "report": {
+    "extendReport": true
+  }
+}

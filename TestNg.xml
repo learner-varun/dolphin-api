@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="sampleTest" parallel="methods" thread-count="3" >
+    <listeners>
+        <listener class-name="core.listners.TestNGActions"/>
+        <listener class-name="core.listners.retryanalyzer.RetryListener"/>
+    </listeners>
+    <test name="sample-Test" preserve-order="false" verbose="2" group-by-instances="false">
+        <packages>
+            <package name="testcases"/>
+        </packages>
+    </test>
+
+</suite>
