@@ -1,27 +1,26 @@
 package core.listners;
 
-import com.aventstack.extentreports.ExtentTest;
-import core.base.APIBase;
+import core.configs.ConfigLoader;
+import core.enums.LogLevel;
+import core.logger.LoggerFactory;
 import core.report.ExtendReport;
+import core.utils.StringUtilities;
 import core.utils.TimeUtilities;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static core.configs.TestConfigs.EXECUTION_START_TIME;
-import static examples.constants.APIConfigs.BASE_URL;
+import static core.configs.TestConfigs.*;
 
 
 public class TestNGActions implements ITestListener {
+    LoggerFactory loggerFactory = new LoggerFactory(this.getClass());
     ExtendReport extendReport = new ExtendReport();
 
     @Override
     public void onTestStart(ITestResult iTestResult) {
-        extendReport.addTestToReport(iTestResult.getMethod().getMethodName(),iTestResult);
-        ExtendReport.logInfoMessage("************** Test is started at : "+TimeUtilities.getCurrentTime()+" **************");
+        extendReport.addTestToReport(iTestResult.getMethod().getMethodName(), iTestResult);
+        ExtendReport.logInfoMessage("************** Test is started at : " + TimeUtilities.getCurrentTime() + " **************");
     }
 
     @Override
@@ -47,19 +46,23 @@ public class TestNGActions implements ITestListener {
     @Override
     public void onStart(ITestContext iTestContext) {
         EXECUTION_START_TIME = TimeUtilities.getCurrentTime();
+        String configFile = System.getProperty("ConfigFile");
+        if (!StringUtilities.isNull(configFile)) {
+            ConfigLoader.loadConfig(TEST_RESOURCE_FOLDER + "/" + configFile);
+            loggerFactory.logMessage(LogLevel.INFO, "The configuration is loading from : " + configFile);
+        } else {
+            ConfigLoader.loadConfig(TEST_RESOURCE_FOLDER + "/" + DEAFULT_CONFIG_JSON_FILE);
+            loggerFactory.logMessage(LogLevel.INFO, "The configuration is loading from : " + DEAFULT_CONFIG_JSON_FILE);
+        }
         extendReport.startReport();
-        APIBase.setBaseURL(BASE_URL);
-        Map<String,String> headers = new HashMap();
-        headers.put("Content-Type","application/json");
-        APIBase.addGlobalHeaders(headers);
     }
 
     @Override
     public void onFinish(ITestContext iTestContext) {
         extendReport.endReport();
     }
-    public void logMessageToReport(String message)
-    {
+
+    public void logMessageToReport(String message) {
         extendReport.logInfoMessage(message);
     }
 }

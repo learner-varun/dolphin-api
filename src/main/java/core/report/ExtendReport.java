@@ -3,7 +3,6 @@ package core.report;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.markuputils.Markup;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import core.utils.TimeUtilities;
@@ -19,17 +18,27 @@ public class ExtendReport {
     ExtentTest extentTest;
 
     public ExtendReport() {
-        System.out.println("Report start");
+    }
+
+    public static synchronized boolean logInfoMessage(String message) {
+        extentTestThreadLocal.get().info(message);
+        return true;
+    }
+
+    public static synchronized boolean logInfoMessage(Markup message) {
+        extentTestThreadLocal.get().info(message);
+        return true;
     }
 
     public synchronized boolean startReport() {
         extentReports = new ExtentReports();
+        SYSTEM_PROPERTIES.forEach((key, value) -> extentReports.setSystemInfo(key, value));
         sparkReporter = new ExtentSparkReporter(EXTENT_REPORT_FULL_PATH);
         extentReports.attachReporter(sparkReporter);
 
         sparkReporter.config().setTheme(Theme.STANDARD);
-        sparkReporter.config().setDocumentTitle(REPORT_DOCUMENT_TITLE);
-        sparkReporter.config().setReportName(REPORT_REPORT_NAME);
+        sparkReporter.config().setDocumentTitle(PROJECT_NAME + " : " + SUITE_NAME);
+        sparkReporter.config().setReportName(ENVIRONMENT_NAME + " - " + SUITE_NAME);
         return true;
     }
 
@@ -38,20 +47,23 @@ public class ExtendReport {
         if (result.getStatus() == ITestResult.SUCCESS) {
             extentTestThreadLocal.get().pass("Test is <b><font color='green'>PASSED</font></b>");
         } else if (result.getStatus() == ITestResult.SKIP) {
-            extentTestThreadLocal.get().skip("Test <b><font color='red'>SKIPPED</font></b> due to : <br><pre>" + result.getThrowable().getMessage().replaceAll("\n","<br>")+"</pre>");
+            if (ADD_SKIPPED_CASES_TO_REPORT) {
+                extentTestThreadLocal.get().skip("Test <b><font color='orange'>SKIPPED</font></b> due to : <br><pre>" + result.getThrowable().getMessage().replace("expected [true] but found [false]", "").trim().replaceAll("\n", "<br>") + "</pre>");
+            } else {
+                extentReports.removeTest(result.getMethod().getMethodName());
+            }
         } else if (result.getStatus() == ITestResult.FAILURE) {
-            extentTestThreadLocal.get().fail("Test <b><font color='red'> FAILED</font></b> due to : <br><pre>" + result.getThrowable().getMessage().replaceAll("\n","<br>")+"</pre>");
+            extentTestThreadLocal.get().fail("Test <b><font color='red'> FAILED</font></b> due to : <br><pre>" + result.getThrowable().getMessage().replace("expected [true] but found [false]", "").trim().replaceAll("\n", "<br>") + "</pre>");
         }
-        extentTestThreadLocal.get().info("************** Test is completed at : "+ TimeUtilities.getCurrentTime() +" **************");
-       // extentReports.removeTest(result.getMethod().getMethodName());
+        extentTestThreadLocal.get().info("************** Test is completed at : " + TimeUtilities.getCurrentTime() + " **************");
         extentTestThreadLocal.remove();
         return false;
     }
 
-    public synchronized boolean addTestToReport( String testName,ITestResult iTestResult) {
+    public synchronized boolean addTestToReport(String testName, ITestResult iTestResult) {
 
         this.extentTest = extentReports.createTest(testName);
-        for (String tagName:iTestResult.getMethod().getGroups()) {
+        for (String tagName : iTestResult.getMethod().getGroups()) {
             this.extentTest.assignCategory(tagName);
         }
         extentTestThreadLocal.set(this.extentTest);
@@ -61,16 +73,6 @@ public class ExtendReport {
 
     public synchronized boolean endReport() {
         extentReports.flush();
-        return true;
-    }
-    public static synchronized boolean logInfoMessage(String message)
-    {
-        extentTestThreadLocal.get().info(message);
-        return true;
-    }
-    public static synchronized boolean logInfoMessage(Markup message)
-    {
-        extentTestThreadLocal.get().info(message);
         return true;
     }
 }

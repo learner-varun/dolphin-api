@@ -1,14 +1,27 @@
 {
   "testConfigs": {
-    "baseURL": "https://www.saucedemo.com/",
-    "environment": "QA",
+    "environment": "PROD",
     "projectName": "SOURCE DEMO",
-    "suiteName": "REGRESSION",
-    "retryOnFailure": true,
-    "retryCount": 1,
-    "threadCount": 3
+    "suiteName": "SANITY",
+    "domainURL": "gorest.co.in/public/v2",
+    "portNumber": "",
+    "protocol": "https",
+    "failOnRetry": false,
+    "retryCount": 1
   },
   "report": {
-    "extendReport": true
+    "enableExtendReport": true,
+    "addSkippedTestToReport": false
+  },
+  "defaultHeaders": {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer ddd19ff8b9c103063c5a7dd89701e5544645b675aa9b9ea98252d5aabb561766"
+  },
+  "systemInfo": {
+    "SYSTEM OS": "MAC OS X",
+    "NAME": "NAME OF TESTER",
+    "RELEASE": "R-1.1",
+    "VERSION": "1.1.0",
+    "BRANCH": "RELEASE-1.1.0"
   }
 }

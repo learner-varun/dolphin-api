@@ -6,7 +6,7 @@ public class HTTPCodes {
     // 1XX - Informational
     public static final int CONTINUE = 100;
     public static final int SWITCHING_PROTOCOLS = 101;
-    public static final int PROCESSING =102;
+    public static final int PROCESSING = 102;
 
     //2XX - Success
     public static final int OK = 200;

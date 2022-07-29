@@ -34,20 +34,17 @@ public class APIResponseFilter implements Filter {
                 new PrintStream(new WriterOutputStream(new StringWriter())),
                 true);
 
-        ExtendReport.logInfoMessage("<b>REQUEST</b> :<br><pre>"+requestStr+"</pre>");
+        ExtendReport.logInfoMessage("<b>REQUEST</b> :<br><pre>" + requestStr + "</pre>");
 
         long responseTime = response.getTime();
 
-        if(responseTime<API_SLA_TIME)
-        {
-            ExtendReport.logInfoMessage("Response time : <font color='green'><b>"+responseTime+"</b> </font>ms");
-        }
-        else
-        {
-            ExtendReport.logInfoMessage("Response time : <font color='red'><b>"+responseTime+"</b> </font>ms");
+        if (responseTime < API_SLA_TIME) {
+            ExtendReport.logInfoMessage("Response time : <font color='green'><b>" + responseTime + "</b> </font>ms");
+        } else {
+            ExtendReport.logInfoMessage("Response time : <font color='red'><b>" + responseTime + "</b> </font>ms");
         }
 
-        ExtendReport.logInfoMessage("<b>RESPONSE </b>:<br><pre>"+responseStr+"</pre>");
+        ExtendReport.logInfoMessage("<b>RESPONSE </b>:<br><pre>" + responseStr + "</pre>");
 
 //        List<String> list = new ArrayList<>() ;
 //        list.add("Test");

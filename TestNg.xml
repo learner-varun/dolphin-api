@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="sampleTest" parallel="methods" thread-count="3" >
+<suite name="sampleTest">
     <listeners>
         <listener class-name="core.listners.TestNGActions"/>
         <listener class-name="core.listners.retryanalyzer.RetryListener"/>
