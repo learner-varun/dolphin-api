@@ -78,6 +78,7 @@ public class CustomTest extends TestDataProvider {
                 .get(EndPoints.GET_EMPLOYEE_DETAILS.replace("{id}", (CharSequence) context.getAttribute("userId")));
 
         new AssertFactory(response)
+                .matchSchemaOfResponse("getAPIResponseSchema.json")
                 .isSuccess("Response code is not 200")
                 .done();
     }

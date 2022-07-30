@@ -1,8 +1,12 @@
 package core.assertion;
 
 import core.constants.HTTPCodes;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
+import io.restassured.response.ValidatableResponse;
 import org.testng.asserts.SoftAssert;
+
+import java.io.File;
 
 public class AssertFactory {
     static boolean assertionChecker = true;
@@ -79,6 +83,11 @@ public class AssertFactory {
 
     public AssertFactory containsValue(String key, String value, String reasonOfFailure) {
         softAssert.assertTrue(response.getBody().jsonPath().get(key).toString().equalsIgnoreCase(value), reasonOfFailure);
+        return this;
+    }
+    public AssertFactory matchSchemaOfResponse(String fileName)
+    {
+        response.then().assertThat().body(JsonSchemaValidator.matchesJsonSchema(new File("src/test/resources/schema/"+fileName)));
         return this;
     }
 }
