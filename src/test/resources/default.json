@@ -3,13 +3,15 @@
     "environment": "PROD",
     "projectName": "SOURCE DEMO",
     "suiteName": "SANITY",
+    "protocol": "https",
     "domainURL": "gorest.co.in/public/v2",
     "portNumber": "",
-    "protocol": "https",
     "failOnRetry": false,
-    "retryCount": 1
+    "retryCount": 1,
+    "maxAPIResponseTime" : 1500,
+    "failTestOnSLABreach" : true
   },
-  "report": {
+  "reportConfigs": {
     "enableExtendReport": true,
     "addSkippedTestToReport": false
   },
@@ -17,7 +19,7 @@
     "Content-Type": "application/json",
     "Authorization": "Bearer ddd19ff8b9c103063c5a7dd89701e5544645b675aa9b9ea98252d5aabb561766"
   },
-  "systemInfo": {
+  "additionalInfoForReport": {
     "SYSTEM OS": "MAC OS X",
     "NAME": "NAME OF TESTER",
     "RELEASE": "R-1.1",

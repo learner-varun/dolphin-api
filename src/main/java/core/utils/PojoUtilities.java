@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class PojoUtilities {
     static ObjectMapper mapper = new ObjectMapper();
 
-    public static String generateBodyJson(Object object) {
+    public static String generateJSONFromObject(Object object) {
         try {
             return mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {

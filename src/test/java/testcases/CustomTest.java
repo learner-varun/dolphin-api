@@ -1,6 +1,6 @@
 package testcases;
 
-import core.assertion.AssertFactory;
+import core.assertion.AssertionFactory;
 import core.utils.PojoUtilities;
 import dataprovider.TestDataProvider;
 import examples.constants.EndPoints;
@@ -29,11 +29,11 @@ public class CustomTest extends TestDataProvider {
         createUser.setStatus("active");
 
         Response response = testBuilder()
-                .body(PojoUtilities.generateBodyJson(createUser))
+                .body(PojoUtilities.generateJSONFromObject(createUser))
                 .post(EndPoints.CREATE_EMPLOYEE);
         context.setAttribute("userId", Integer.toString(response.getBody().jsonPath().get("id")));
 
-        new AssertFactory(response)
+        new AssertionFactory(response)
                 .isCreated("Response code is not 201")
                 .hasValue("name", name, "Name is not matching")
                 .done();
@@ -44,7 +44,7 @@ public class CustomTest extends TestDataProvider {
         Response response = testBuilder()
                 .get(EndPoints.GET_EMPLOYEE_DETAILS.replace("{id}", (CharSequence) context.getAttribute("userId")));
 
-        new AssertFactory(response)
+        new AssertionFactory(response)
                 .isSuccess("Response code is not 200")
                 .done();
     }
@@ -64,9 +64,9 @@ public class CustomTest extends TestDataProvider {
         createUser.setStatus("active");
 
         Response response = testBuilder()
-                .body(PojoUtilities.generateBodyJson(createUser))
+                .body(PojoUtilities.generateJSONFromObject(createUser))
                 .put(EndPoints.UPDATE_EMPLOYEE.replace("{id}", (CharSequence) context.getAttribute("userId")));
-        new AssertFactory(response)
+        new AssertionFactory(response)
                 .isSuccess("Response code is not 200")
                 .hasValue("name", name, "Name is not matching")
                 .done();
@@ -77,7 +77,7 @@ public class CustomTest extends TestDataProvider {
         Response response = testBuilder()
                 .get(EndPoints.GET_EMPLOYEE_DETAILS.replace("{id}", (CharSequence) context.getAttribute("userId")));
 
-        new AssertFactory(response)
+        new AssertionFactory(response)
                 .matchSchemaOfResponse("getAPIResponseSchema.json")
                 .isSuccess("Response code is not 200")
                 .done();
@@ -88,7 +88,7 @@ public class CustomTest extends TestDataProvider {
         Response response = testBuilder()
                 .delete(EndPoints.DELETE_EMPLOYEE.replace("{id}", (CharSequence) context.getAttribute("userId")));
 
-        new AssertFactory(response)
+        new AssertionFactory(response)
                 .isNoContent("Response code is not 204")
                 .done();
     }
@@ -98,7 +98,7 @@ public class CustomTest extends TestDataProvider {
         Response response = testBuilder()
                 .get(EndPoints.GET_EMPLOYEE_DETAILS.replace("{id}", (CharSequence) context.getAttribute("userId")));
 
-        new AssertFactory(response)
+        new AssertionFactory(response)
                 .isNotFound("Response code is not 404")
                 .done();
     }

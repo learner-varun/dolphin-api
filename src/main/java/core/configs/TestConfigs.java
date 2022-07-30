@@ -12,7 +12,7 @@ public class TestConfigs {
     public static String EXTENT_REPORT_FULL_PATH = EXTENT_REPORT_PATH.concat(EXTENT_REPORT_FILE_NAME);
     public static String PROJECT_NAME = "API Testing Report";
     public static String SUITE_NAME = "Regression suite";
-    public static String EXECUTION_START_TIME = "test";
+    public static String EXECUTION_START_TIME = "";
     public static boolean ENABLE_EXTEND_REPORT;
     public static boolean ADD_SKIPPED_CASES_TO_REPORT;
     public static String ENVIRONMENT_NAME;
@@ -21,6 +21,7 @@ public class TestConfigs {
     public static String PROTOCOL = "";
     public static long API_SLA_TIME = 1000;
     public static int MAXIMUM_RETRY_COUNT = 3;
+    public static boolean FAIL_TEST_ON_SLA_BREACH = false;
 
     public static Map<String, String> SYSTEM_PROPERTIES = new HashMap<String, String>();
     public static Map<String, String> DEFAULT_HEADERS = new HashMap<String, String>();

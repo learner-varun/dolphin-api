@@ -3,29 +3,36 @@ package core.assertion;
 import core.constants.HTTPCodes;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
 import org.testng.asserts.SoftAssert;
 
 import java.io.File;
 
-public class AssertFactory {
+import static core.configs.TestConfigs.API_SLA_TIME;
+import static core.configs.TestConfigs.FAIL_TEST_ON_SLA_BREACH;
+
+public class AssertionFactory {
     static boolean assertionChecker = true;
     Response response;
     SoftAssert softAssert;
     String finalErrorMessage = "";
 
-    public AssertFactory(Response response) {
+    public AssertionFactory(Response response) {
         softAssert = new SoftAssert();
         this.response = response;
     }
 
     public void done() {
-        softAssert.assertTrue(assertionChecker, finalErrorMessage);
+        if(FAIL_TEST_ON_SLA_BREACH && response.getTime()>API_SLA_TIME)
+        {
+            assertionChecker=false;
+            finalErrorMessage = finalErrorMessage.trim() +"\n\tThe expected SLA is breached.\n\tExpected SLA : "+API_SLA_TIME +"\n\tActual Response is : "+response.getTime();
+        }
+        softAssert.assertTrue(assertionChecker, finalErrorMessage.trim());
         assertionChecker = true;
         softAssert.assertAll();
     }
 
-    public AssertFactory isSuccess(String reasonOfFailure) {
+    public AssertionFactory isSuccess(String reasonOfFailure) {
         if (!(verifyResponseCode(HTTPCodes.OK))) {
             finalErrorMessage = finalErrorMessage + reasonOfFailure + "\n\t";
             assertionChecker = false;
@@ -33,7 +40,7 @@ public class AssertFactory {
         return this;
     }
 
-    public AssertFactory isCreated(String reasonOfFailure) {
+    public AssertionFactory isCreated(String reasonOfFailure) {
         if (!verifyResponseCode(HTTPCodes.CREATED)) {
             finalErrorMessage = finalErrorMessage + reasonOfFailure + "\n\t";
             assertionChecker = false;
@@ -49,7 +56,7 @@ public class AssertFactory {
         }
     }
 
-    public AssertFactory isNoContent(String reasonOfFailure) {
+    public AssertionFactory isNoContent(String reasonOfFailure) {
         if (!verifyResponseCode(HTTPCodes.NO_CONTENT)) {
             finalErrorMessage = finalErrorMessage + reasonOfFailure + "\n\t";
             assertionChecker = false;
@@ -57,7 +64,7 @@ public class AssertFactory {
         return this;
     }
 
-    public AssertFactory isNotFound(String reasonOfFailure) {
+    public AssertionFactory isNotFound(String reasonOfFailure) {
         if (!verifyResponseCode(HTTPCodes.NOT_FOUND)) {
             finalErrorMessage = finalErrorMessage + reasonOfFailure + "\n\t";
             assertionChecker = false;
@@ -65,7 +72,7 @@ public class AssertFactory {
         return this;
     }
 
-    public AssertFactory hasValue(String key, String value, String reasonOfFailure) {
+    public AssertionFactory hasValue(String key, String value, String reasonOfFailure) {
         if (!(getValueFromResponse(response, key).equalsIgnoreCase(value))) {
             finalErrorMessage = finalErrorMessage + reasonOfFailure + "\n\t";
             assertionChecker = false;
@@ -81,11 +88,11 @@ public class AssertFactory {
         }
     }
 
-    public AssertFactory containsValue(String key, String value, String reasonOfFailure) {
+    public AssertionFactory containsValue(String key, String value, String reasonOfFailure) {
         softAssert.assertTrue(response.getBody().jsonPath().get(key).toString().equalsIgnoreCase(value), reasonOfFailure);
         return this;
     }
-    public AssertFactory matchSchemaOfResponse(String fileName)
+    public AssertionFactory matchSchemaOfResponse(String fileName)
     {
         response.then().assertThat().body(JsonSchemaValidator.matchesJsonSchema(new File("src/test/resources/schema/"+fileName)));
         return this;
