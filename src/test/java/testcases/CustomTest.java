@@ -1,41 +1,30 @@
 package testcases;
 
 import core.assertion.AssertionFactory;
-import core.utils.PojoUtilities;
+import core.utils.JSONUtilities;
 import dataprovider.TestDataProvider;
 import examples.constants.EndPoints;
-import examples.pojo.CreateUser;
 import io.restassured.response.Response;
+import org.json.simple.JSONObject;
 import org.testng.ITestContext;
 import org.testng.annotations.Test;
 
-import static core.faker.FakeDataFactory.fakeData;
 
 public class CustomTest extends TestDataProvider {
 
-
-    @Test(groups = {"REGRESSION", "POST"}, priority = 1)
-    public void postAPICall(ITestContext context) {
-        CreateUser createUser = new CreateUser();
-        String name = fakeData.name().fullName();
-        createUser.setName(name);
-        createUser.setEmail(fakeData.internet().safeEmailAddress());
-        boolean gender = fakeData.random().nextBoolean();
-        if (gender) {
-            createUser.setGender("male");
-        } else {
-            createUser.setGender("female");
-        }
-        createUser.setStatus("active");
-
+    @Test(dataProvider= "userProfileData", groups = {"REGRESSION", "POST"}, priority = 1)
+    public void postAPICall(ITestContext context, String body) {
         Response response = testBuilder()
-                .body(PojoUtilities.generateJSONFromObject(createUser))
+                .body(body)
                 .post(EndPoints.CREATE_EMPLOYEE);
+
         context.setAttribute("userId", Integer.toString(response.getBody().jsonPath().get("id")));
+
+        JSONObject jsonbody = JSONUtilities.convertStringToJSON(body);
 
         new AssertionFactory(response)
                 .isCreated("Response code is not 201")
-                .hasValue("name", name, "Name is not matching")
+                .hasValue("name",jsonbody.get("name").toString() , "Name is not matching")
                 .done();
     }
 
@@ -49,26 +38,17 @@ public class CustomTest extends TestDataProvider {
                 .done();
     }
 
-    @Test(groups = {"REGRESSION", "UPDATE"}, priority = 3)
-    public void updateAPICall(ITestContext context) {
-        CreateUser createUser = new CreateUser();
-        String name = fakeData.name().fullName();
-        createUser.setName(name);
-        createUser.setEmail(fakeData.internet().safeEmailAddress());
-        boolean gender = fakeData.random().nextBoolean();
-        if (gender) {
-            createUser.setGender("male");
-        } else {
-            createUser.setGender("female");
-        }
-        createUser.setStatus("active");
-
+    @Test(dataProvider= "userProfileData", groups = {"REGRESSION", "UPDATE"}, priority = 3)
+    public void updateAPICall(ITestContext context,String body) {
         Response response = testBuilder()
-                .body(PojoUtilities.generateJSONFromObject(createUser))
+                .body(body)
                 .put(EndPoints.UPDATE_EMPLOYEE.replace("{id}", (CharSequence) context.getAttribute("userId")));
+
+        JSONObject jsonbody = JSONUtilities.convertStringToJSON(body);
+
         new AssertionFactory(response)
                 .isSuccess("Response code is not 200")
-                .hasValue("name", name, "Name is not matching")
+                .hasValue("name", jsonbody.get("name").toString(), "Name is not matching")
                 .done();
     }
 

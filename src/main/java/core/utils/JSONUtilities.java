@@ -17,4 +17,14 @@ public class JSONUtilities {
         }
         return jsonObject;
     }
+    public static JSONObject convertStringToJSON(String StringToConvert) {
+        JSONObject jsonObject = null;
+        JSONParser parser = new JSONParser();
+        try {
+            jsonObject = (JSONObject) parser.parse(StringToConvert);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
 }

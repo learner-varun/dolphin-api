@@ -8,8 +8,8 @@
     "portNumber": "",
     "failOnRetry": false,
     "retryCount": 1,
-    "maxAPIResponseTime" : 1500,
-    "failTestOnSLABreach" : true
+    "maxAPIResponseTime" : 500,
+    "failTestOnSLABreach" : false
   },
   "reportConfigs": {
     "enableExtendReport": true,
@@ -17,7 +17,7 @@
   },
   "defaultHeaders": {
     "Content-Type": "application/json",
-    "Authorization": "Bearer ddd19ff8b9c103063c5a7dd89701e5544645b675aa9b9ea98252d5aabb561766"
+    "Authorization": "Bearer <YOUR-AUTH-ID>"
   },
   "additionalInfoForReport": {
     "SYSTEM OS": "MAC OS X",
